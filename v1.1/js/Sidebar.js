@@ -311,7 +311,7 @@ function ComponentInput(config){
 
 	// Show
 	self.show = function(){
-		input.value = self.getValue();
+		input.value = self.getValue() ? self.getValue() : String( config.defaultValue != undefined ? config.defaultValue : "" );
 	};
 
 	// Select
