@@ -92,6 +92,7 @@ function Loopy(config){
 	// (only Nodes need redrawing often. And only in PLAY mode.)
 	// SCRIPT LOADER
 	self.loadScript = function(){
+			delete self.script
 			if( self.scriptUrl == "" || self.scriptUrl == "null" ) return
 			// detect github snippets and convert link to return raw code 
 			var isGist = self.scriptUrl.match(/gist\.github/) != null  
