@@ -57,8 +57,20 @@ function Sidebar(loopy){
 				Node.defaultValue = value;
 			}
 		}));
+
+	  // remember base components
+		page.baseComponents = page.components.slice() 
+
 		page.onedit = function(){
 
+			if( loopy.script && loopy.script.onEvent && !loopy.script.registeredComponents ){
+				page.dom.innerHTML = ""
+				page.components = []
+				page.componentsById = {}
+				page.baseComponents.map( function(c){ page.addComponent(c.propName, c) })
+				loopy.script.onEvent("initNodeGUI", {page:page})
+				loopy.script.registeredComponents = true
+			} 
 			// Set color of Slider
 			var node = page.target;
 			var color = Node.COLORS[node.hue];

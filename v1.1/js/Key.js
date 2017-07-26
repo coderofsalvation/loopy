@@ -25,10 +25,11 @@
 	Key.onKeyDown = function(event){
 		if(window.loopy && loopy.modal && loopy.modal.isShowing) return;
 		var code = KEY_CODES[event.keyCode];
-	    Key[code] = true;
-	    publish("key/"+code);
-	    event.stopPropagation();
-	    event.preventDefault();
+		if( code == undefined || code == 'control' ) return
+	  Key[code] = true;
+	  publish("key/"+code);
+	  event.stopPropagation();
+	  event.preventDefault();
 	}
 	Key.onKeyUp = function(event){
 		if(window.loopy && loopy.modal && loopy.modal.isShowing) return;

@@ -22,6 +22,7 @@ function Node(model, config){
 
 	var self = this;
 	self._CLASS_ = "Node";
+	self.intensity = 0.33
 
 	// Mah Parents!
 	self.loopy = model.loopy;
@@ -80,7 +81,7 @@ function Node(model, config){
 		if(_controlsPressed){
 
 			// Change my value
-			var delta = _controlsDirection*0.33; // HACK: hard-coded 0.33
+			var delta = _controlsDirection*self.intensity 
 			self.value += delta;
 
 			// And also PROPAGATE THE DELTA
@@ -114,17 +115,22 @@ function Node(model, config){
 	};
 
 	self.takeSignal = function(signal){
+		var process = function(signal){
+			// Change value
+			self.value += signal.delta;
 
-		// Change value
-		self.value += signal.delta;
+			// Propagate signal
+			self.sendSignal(signal);
+			// self.sendSignal(signal.delta*0.9); // PROPAGATE SLIGHTLY WEAKER
 
-		// Propagate signal
-		self.sendSignal(signal);
-		// self.sendSignal(signal.delta*0.9); // PROPAGATE SLIGHTLY WEAKER
+			// Animation
+			// _offsetVel += 0.08 * (signal.delta/Math.abs(signal.delta));
+			_offsetVel -= 6 * (signal.delta/Math.abs(signal.delta));
+		}
 
-		// Animation
-		// _offsetVel += 0.08 * (signal.delta/Math.abs(signal.delta));
-		_offsetVel -= 6 * (signal.delta/Math.abs(signal.delta));
+		if( self.loopy.script && self.loopy.script.onEvent )
+			self.loopy.script.onEvent.apply( window.scriptContext, ["signal", {node:self, signal:signal, process:process}] )
+		else process(signal)
 
 	};
 
@@ -142,36 +148,42 @@ function Node(model, config){
 	var _offsetHookes = 0.8;
 	self.update = function(speed){
 
-		// When actually playing the simulation...
-		var _isPlaying = (self.loopy.mode==Loopy.MODE_PLAY);
+  	// When actually playing the simulation...
+  	var _isPlaying = (self.loopy.mode==Loopy.MODE_PLAY);
 
-		// Otherwise, value = initValue exactly
-		if(self.loopy.mode==Loopy.MODE_EDIT){
-			self.value = self.init;
-		}
+  	// Otherwise, value = initValue exactly
+  	if(self.loopy.mode==Loopy.MODE_EDIT){
+  		self.value = self.init;
+  	}
+  
+  	// Cursor!
+  	if(_controlsSelected) Mouse.showCursor("pointer");
+  
+  	// Keep value within bounds!
+  	self.bound();
+  
+  	// Visually & vertically bump the node
+  	var gotoAlpha = (_controlsVisible || self.loopy.showPlayTutorial) ? 1 : 0;
+  	_controlsAlpha = _controlsAlpha*0.5 + gotoAlpha*0.5;
+  	if(_isPlaying && _controlsPressed){
+  		_offsetGoto = -_controlsDirection*20; // by 20 pixels
+  		// _offsetGoto = _controlsDirection*0.2; // by scale +/- 0.1
+  	}else{
+  		_offsetGoto = 0;
+  	}
+  	_offset += _offsetVel;
+  	if(_offset>40) _offset=40
+  	if(_offset<-40) _offset=-40;
+  	_offsetVel += _offsetAcc;
+  	_offsetVel *= _offsetDamp;
+  	_offsetAcc = (_offsetGoto-_offset)*_offsetHookes;
 
-		// Cursor!
-		if(_controlsSelected) Mouse.showCursor("pointer");
+		// run nodespecific logic if any
+		self.changed = self.lastValue ? self.value != self.lastValue : false
+		if( self.loopy.script && self.loopy.script.onEvent )
+			self.loopy.script.onEvent.apply( window.scriptContext, ["update", {node:self, isPlaying:_isPlaying}] )
 
-		// Keep value within bounds!
-		self.bound();
-
-		// Visually & vertically bump the node
-		var gotoAlpha = (_controlsVisible || self.loopy.showPlayTutorial) ? 1 : 0;
-		_controlsAlpha = _controlsAlpha*0.5 + gotoAlpha*0.5;
-		if(_isPlaying && _controlsPressed){
-			_offsetGoto = -_controlsDirection*20; // by 20 pixels
-			// _offsetGoto = _controlsDirection*0.2; // by scale +/- 0.1
-		}else{
-			_offsetGoto = 0;
-		}
-		_offset += _offsetVel;
-		if(_offset>40) _offset=40
-		if(_offset<-40) _offset=-40;
-		_offsetVel += _offsetAcc;
-		_offsetVel *= _offsetDamp;
-		_offsetAcc = (_offsetGoto-_offset)*_offsetHookes;
-
+	  self.lastValue = self.value
 	};
 
 	// Draw
@@ -252,6 +264,10 @@ function Node(model, config){
 			width = ctx.measureText(self.label).width;
 		}
 		ctx.fillText(self.label, 0, 0);
+		// Debug info
+		if( self.loopy.debug ){
+				ctx.fillText( self.value.toFixed(1), 0, 45);
+		}
 
 		// WOBBLE CONTROLS
 		var cl = 40;
@@ -284,6 +300,9 @@ function Node(model, config){
 		// Restore
 		ctx.restore();
 
+		// run nodespecific logic if any
+		if( self.loopy.script && self.loopy.script.onEvent )
+			self.loopy.script.onEvent.apply( window.scriptContext, ["drawNode", {node:self, ctx:ctx}] )
 	};
 
 	//////////////////////////////////////

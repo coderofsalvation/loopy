@@ -90,6 +90,28 @@ function Loopy(config){
 
 	// TODO: Smarter drawing of Ink, Edges, and Nodes
 	// (only Nodes need redrawing often. And only in PLAY mode.)
+	// SCRIPT LOADER
+	self.loadScript = function(){
+			if( self.scriptUrl == "" || self.scriptUrl == "null" ) return
+			// detect github snippets and convert link to return raw code 
+			var isGist = self.scriptUrl.match(/gist\.github/) != null  
+			// replace github link with rawgit (to make cors work)
+			self.scriptUrl = self.scriptUrl.replace(/\.github\.com/, ".githubusercontent.com" )
+		  ajax({
+					url: self.scriptUrl + ( isGist && self.scriptUrl.match(/\/raw$/) == null ? "/raw" : '') + (isGist ? "?" + Math.random() : ""), 
+		  		success: function(result){
+		  				self.script = new Function("return "+result)
+		  				try{
+		  						self.script = self.script.apply(window.scriptContext)
+		  				}catch(e) {  
+		  						console.error( self.scriptUrl+" error: "+e )
+		  						console.dir(e)
+		  				}
+		  				if( self.script.onEvent ) self.script.onEvent.apply(window.scriptContext, ["init", {loopy:self}])
+		  		}, 
+		  		error: alert.bind(window, ["unreachable url: "+self.scriptUrl])
+		  })
+	}
 
 	//////////////////////
 	// PLAY & EDIT MODE //
@@ -111,6 +133,8 @@ function Loopy(config){
 			self.sidebar.dom.setAttribute("mode","play");
 			self.toolbar.dom.setAttribute("mode","play");
 			document.getElementById("canvasses").removeAttribute("cursor"); // TODO: EVENT BASED
+			if( self.script && self.script.onEvent )
+				self.script.onEvent.apply( window.scriptContext, ["play", {loopy:self}] )
 		}else{
 			publish("model/reset");
 		}
@@ -254,6 +278,7 @@ function Loopy(config){
 		}
 
 	}
+
 
 	// NOT DIRTY, THANKS
 	self.dirty = false;

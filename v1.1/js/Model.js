@@ -28,7 +28,8 @@ function Model(loopy){
 	self.nodes = [];
 	self.nodeByID = {};
 	self.getNode = function(id){
-		return self.nodeByID[id];
+		if( self.nodeByID[id] ) return self.nodeByID[id];
+		return self.nodes.find( function(c){ return c.label == id } ) || false
 	};
 
 	// Remove Node
@@ -253,6 +254,7 @@ function Model(loopy){
 		// 1 - edges
 		// 2 - labels
 		// 3 - UID
+		// 4 - script
 
 		// Nodes
 		var nodes = [];
@@ -315,6 +317,9 @@ function Model(loopy){
 		// META.
 		data.push(Node._UID);
 
+		// Script
+		data.push([self.loopy.scriptUrl])
+
 		// Return as string!
 		var dataString = JSON.stringify(data);
 		dataString = dataString.replace(/"/gi, "%22"); // and ONLY URIENCODE THE QUOTES
@@ -334,6 +339,7 @@ function Model(loopy){
 		var edges = data[1];
 		var labels = data[2];
 		var UID = data[3];
+		var script = data[4];
 
 		// Nodes
 		for(var i=0;i<nodes.length;i++){
@@ -373,6 +379,10 @@ function Model(loopy){
 
 		// META.
 		Node._UID = UID;
+
+		// Script
+		self.loopy.scriptUrl = script && script.length ? script[0] : "" 
+		self.loopy.loadScript()
 
 	};
 

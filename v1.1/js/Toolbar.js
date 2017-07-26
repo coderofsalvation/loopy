@@ -85,6 +85,14 @@ function Toolbar(loopy){
 			self.setTool("erase");
 		}
 	});
+	self.addButton({
+		id: "script",
+		tooltip: "(S)ET JAVASCRIPT",
+		callback: function(){
+				loopy.scriptUrl = String( prompt("Please specify url for javascript logic.\n\ncurrently supported:\n\t\t* gist url\n\t\t* custom url (enable CORS on server)\n\n", loopy.scriptUrl || "https://gist.github.com/coderofsalvation/330b99101244a51fbaac8c8fc5657a74") )
+				loopy.loadScript()
+		}
+	});
 
 	// Select button
 	buttonsByID.ink.callback();

@@ -49,7 +49,7 @@ function Label(model, config){
 
 		// Text!
 		ctx.font = "100 "+Label.FONTSIZE+"px sans-serif";
-		ctx.textAlign = "center";
+		ctx.textAlign = "left";
 		ctx.textBaseline = "middle";
 		ctx.fillStyle = "#000";
 
