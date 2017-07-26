@@ -93,6 +93,7 @@ function Loopy(config){
 	// SCRIPT LOADER
 	self.loadScript = function(){
 			delete self.script
+			self.debug = false
 			if( self.scriptUrl == "" || self.scriptUrl == "null" ) return
 			// detect github snippets and convert link to return raw code 
 			var isGist = self.scriptUrl.match(/gist\.github/) != null  
