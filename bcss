@@ -1,0 +1,26 @@
+#!/bin/bash
+
+usage(){
+  echo "Usage: bcss <logic.bash> <stylesheet.bcss>"
+  exit
+}
+
+# smarty like template engine which executes inline bash in (bashdown) strings (replaces variables with values e.g.)
+# @link http://github.com/coderofsalvation/bashdown
+# @dependancies: sed cat
+# @example: echo 'hi $NAME it is $(date)' > /tmp/mytemplate.bashdown
+# @example: cat /tmp/mytemplate.bashdown | bashdown 
+
+# fetches a document and interprets bashsyntax in string (bashdown) templates 
+# @param string - string with bash(down) syntax (usually surrounded by ' quotes instead of ")
+bashdown(){
+  IFS=''; cat - | sed 's/\\/\\\\\\\\/g' | while read -r line; do 
+    [[ "$line" =~ '$' ]] && line="$(eval "echo \"$( echo "$line" | sed 's/"/\\"/g')\"")"; 
+    echo "$line"
+  done
+}
+
+[[ ! -n "$2" ]] && usage 
+
+source "$1"
+cat "$2" | bashdown > ${2/bcss/css}

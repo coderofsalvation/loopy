@@ -1,0 +1,20 @@
+{
+  "name": "loopyplusplus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+		"start": "nodemon -x ./bcss css/style.bash css/style.bcss --config .nodemon.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderofsalvation/loopy++.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coderofsalvation/loopy++/issues"
+  },
+  "homepage": "https://github.com/coderofsalvation/loopy++#readme"
+}
