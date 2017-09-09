@@ -2,7 +2,7 @@
 
 SIDEBAR CODE
 
-**********************************/
+ **********************************/
 
 function Sidebar(loopy){
 
@@ -67,21 +67,21 @@ function Sidebar(loopy){
 		tpl    += '}'                                      + "\n"
 
 		var cmp = {                                                                                                                                   
-  		label: "<br><br>Script:",
+			label: "<br><br>Script:",
 			id: "nodeScript", 
-  		defaultValue: "", 
+			defaultValue: "", 
 			placeholder:"click to initialize", 
-  		textarea: true, 
+			textarea: true, 
 			onClick: function(){
-					if( this.value == "" ) this.value = tpl
+				if( this.value == "" ) this.value = tpl
 			}, 
-  		oninput: function(value){
+			oninput: function(value){
 				Node.defaultValue = value.replace(/(\n|\t)/gi,'').replace(/[ ]+;[ ]+/gi,';')
-  		}
-  	}
+			}
+		}
 		page.addComponent("jsConfig", new ComponentInput(cmp) )
 
-	  // remember base components
+		// remember base components
 		page.baseComponents = page.components.slice() 
 
 		page.onedit = function(){
@@ -170,7 +170,7 @@ function Sidebar(loopy){
 			page.getComponent("text").select();
 		};
 		page.onhide = function(){
-			
+
 			// If you'd just edited it...
 			var label = page.target;
 			if(!page.target) return;
@@ -197,9 +197,10 @@ function Sidebar(loopy){
 	// Edit
 	(function(){
 		var page = new SidebarPage();
+		page.target = {}
 		page.addComponent(new ComponentHTML({
 			html: ""+
-			
+
 			"<b style='font-size:1.4em'>LOOPY</b> (v1.1)<br>a tool for thinking in systems<br><br>"+
 
 			"<span class='mini_button' onclick='publish(\"modal\",[\"examples\"])'>see examples</span> "+
@@ -218,39 +219,37 @@ function Sidebar(loopy){
 		var tpl = '{'                             + "\n"
 		tpl    += '  debug: true,'                + "\n"
 		tpl    += '  embed: {'                    + "\n"
-		tpl    += '    autoPlay: true,'           + "\n"
-		tpl    += '    autoSignal: ["something"],'+ "\n"
-		tpl    += '    hideButtons: true'         + "\n"
+		tpl    += '    autoPlay: {"?":0.2},'      + "\n"
+		tpl    += '    hideButtons: true, '       + "\n"
+		tpl    += '    hideArrowPolarity: true,'  + "\n"
+		tpl    += '    hideNodeControls: true'    + "\n"
+		tpl    += '  },'                          + "\n"
+		tpl    += '  onEvent: function(e, data){' + "\n"
+		tpl    += '    //console.log(e)'          + "\n"
 		tpl    += '  }'                           + "\n"
 		tpl    += '}'                             + "\n"
 		var cmp = {                                                                                                                                   
-  		label: "<br><br>Script:",
+			label: "<br><br>Script:",
 			id: "globalScript", 
-  		defaultValue: "", 
+			propName: 'nodeValue', 
+			defaultValue: "", 
 			placeholder:"click to initialize", 
-  		textarea: true, 
+			textarea: true, 
 			onClick: function(){
-					if( this.value == "" ) this.value = tpl
+				if( this.value == "" ) this.value = tpl
 			}, 
-  		oninput: function(value){
-				Node.defaultValue = value.replace(/(\n|\t)/gi,'').replace(/[ ]+;[ ]+/gi,';')
-					try{
-  					var script = new Function("return "+Node.defaultValue)
-  					loopy.script = {
-  							version:"1.1", 
-  							onEvent: function(event, data){
-  									if( event == "init" ){
- 											if( script.embed ) 
-											if( script.onEvent ) script.onEvent(event, data)
-  									}
-  							}
-  					}
-					}catch(e){
-		  				console.error( "global scripterror: "+e )
-		  				console.dir(e)
-					}
-  		}
-  	}
+			oninput: function(){
+			}
+		}
+		page.onedit = function(){
+			console.dir(this)
+			loopy.model.globalScript = this.target.globalConfig.replace(/(\t)/gi,'').replace(/[ ]+;[ ]+/gi,';') //.replace(/\s\s+/g, ' ')
+			publish("model/changed")
+		}
+
+		subscribe("model/changed",  function(){
+			initScript(loopy)
+		})
 		page.addComponent("globalConfig", new ComponentInput(cmp) )
 
 		self.addPage("Edit", page);
@@ -348,14 +347,14 @@ function Component(){
 		return self.page.target[self.propName];
 	};
 	self.setValue = function(value){
-		
+
 		// Model's been changed!
 		publish("model/changed");
 
 		// Edit the value!
 		self.page.target[self.propName] = value;
 		self.page.onedit(); // callback!
-		
+
 	};
 }
 
@@ -504,9 +503,7 @@ function ComponentOutput(config){
 	var self = this;
 	Component.apply(self);
 
-	// DOM: just a readonly input that selects all when clicked
 	self.dom = _createInput("component_output");
-	self.dom.setAttribute("readonly", "true");
 	self.dom.onclick = function(){
 		self.dom.select();
 	};

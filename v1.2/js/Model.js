@@ -317,11 +317,15 @@ function Model(loopy){
 		// META.
 		data.push(Node._UID);
 
-		// Script
+		// Script Url
 		data.push([self.loopy.scriptUrl])
+
+		// JS Config
+		data.push([self.loopy.model.globalScript])
 
 		// Return as string!
 		var dataString = JSON.stringify(data);
+		//var dataString = lzwCompress.pack(data)
 		dataString = dataString.replace(/"/gi, "%22"); // and ONLY URIENCODE THE QUOTES
 		dataString = dataString.substr(0, dataString.length-1) + "%5D";// also replace THE LAST CHARACTER
 		return dataString;
@@ -332,7 +336,7 @@ function Model(loopy){
 
 		self.clear();
 
-		var data = JSON.parse(dataString);
+		var data = JSON.parse( dataString );
 
 		// Get from array!
 		var nodes = data[0];
@@ -340,6 +344,7 @@ function Model(loopy){
 		var labels = data[2];
 		var UID = data[3];
 		var script = data[4];
+		var scripts = data[5];
 
 		// Nodes
 		for(var i=0;i<nodes.length;i++){
@@ -380,9 +385,16 @@ function Model(loopy){
 		// META.
 		Node._UID = UID;
 
-		// Script
+		// JS ScriptUrl
 		self.loopy.scriptUrl = script && script.length ? script[0] : "" 
 		self.loopy.loadScript()
+
+		// init JS Scripts
+		self.loopy.model.globalScript = scripts ? scripts[0] : false
+		if( self.loopy.model.globalScript ){
+			initScript(loopy)
+			if( pluck(self, 'loopy.script.onEvent' ) ) self.loopy.script.onEvent.apply(window.scriptContext, ["init", {loopy:self}])
+		}
 
 	};
 

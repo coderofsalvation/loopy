@@ -318,4 +318,55 @@ function _shiftArray(array, shiftIndex){
 	return shifted;
 }
 
+function debounce(delay, fn){
+	fn.timeoutid = false
+	fn.delay = delay
+	fn.scope = this
+	return function (){
+		var args = arguments
+		clearTimeout(fn.timeoutid)
+		fn.timeoutid = setTimeout(function(){
+			fn.apply( fn.scope, args )
+		}, fn.delay)
+	}
+}
+
+function initScript(loopy){
+	if( !loopy.model.globalScript ) return
+	document.querySelector("#globalScript").style.border = 'none'
+	try{
+		var script = new Function("return "+loopy.model.globalScript)()
+		loopy.script = {
+			version:"1.1", 
+			onEvent: function(event, data){
+				if( event == "init" ){
+					console.log("globalscript: (re)init!")
+					if( script.embed && loopy.embedded ){
+						loopy.showPolarity = ! script.embed.hideArrowPolarity 
+						loopy.showNodeControls = ! script.embed.hideNodeControls 
+						document.querySelector('#playbar').style.display = script.embed.hideButtons ? 'none' :'' 
+						if( script.embed.autoPlay ){
+							for( var nodename in script.embed.autoPlay ){
+								var value = script.embed.autoPlay[nodename]
+								var node = loopy.model.getNode(nodename)
+								if( node ) setTimeout( function(){ node.sendSignal({delta:value}) }, 1000 )
+							}
+						} 
+					}
+				}
+				if( script.onEvent ) script.onEvent(event, data)
+			}
+		}
+	}catch(e){
+		loopy.script = false
+		document.querySelector("#globalScript").style.border = '2px solid red'
+		console.error( "global scripterror: "+e )
+		console.dir(e)
+	}
+}
+
+function pluck(obj, path){
+  return new Function('obj', "return obj."+path)(obj)
+}
+
 

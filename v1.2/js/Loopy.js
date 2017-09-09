@@ -120,7 +120,9 @@ function Loopy(config){
 	//////////////////////
 
 	self.showPlayTutorial = false;
+	self.showNodeControls = true
 	self.wobbleControls = -1;
+	self.showPolarity = true;
 	self.setMode = function(mode){
 
 		self.mode = mode;
@@ -163,6 +165,7 @@ function Loopy(config){
 	// YOU'RE A DIRTY BOY
 	subscribe("model/changed", function(){
 		if(!self.embedded) self.dirty = true;
+		if( self.script && self.script.onEvent ) self.script.onEvent.apply(window.scriptContext, ["init", {loopy:self}])
 	});
 
 	self.saveToURL = function(embed){

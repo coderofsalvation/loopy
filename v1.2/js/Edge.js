@@ -407,15 +407,17 @@ function Edge(model, config){
 		ctx.stroke();
 
 		// Draw label
-		ctx.font = "100 60px sans-serif";
-		ctx.textAlign = "center";
-		ctx.textBaseline = "middle";
-		ctx.save();
-		ctx.translate(lx, ly);
-		ctx.rotate(-a);
-		ctx.fillStyle = "#999";
-		ctx.fillText(self.label, 0, 0);
-		ctx.restore();
+		if( self.loopy.showPolarity ){
+			ctx.font = "100 60px sans-serif";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.save();
+			ctx.translate(lx, ly);
+			ctx.rotate(-a);
+			ctx.fillStyle = "#999";
+			ctx.fillText(self.label, 0, 0);
+			ctx.restore();
+		}
 
 		// DRAW SIGNALS
 		self.drawSignals(ctx);

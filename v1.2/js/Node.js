@@ -278,24 +278,26 @@ function Node(model, config){
 		}
 
 		// Controls!
-		ctx.globalAlpha = _controlsAlpha;
-		ctx.strokeStyle = "rgba(0,0,0,0.8)";
-		// top arrow
-		ctx.beginPath();
-		ctx.moveTo(-cl,-cy-cl);
-		ctx.lineTo(0,-cy-cl*2);
-		ctx.lineTo(cl,-cy-cl);
-		ctx.lineWidth = (_controlsDirection>0) ? 10: 3;
-		if(self.loopy.showPlayTutorial) ctx.lineWidth=6;
-		ctx.stroke();
-		// bottom arrow
-		ctx.beginPath();
-		ctx.moveTo(-cl,cy+cl);
-		ctx.lineTo(0,cy+cl*2);
-		ctx.lineTo(cl,cy+cl);
-		ctx.lineWidth = (_controlsDirection<0) ? 10: 3;
-		if(self.loopy.showPlayTutorial) ctx.lineWidth=6;
-		ctx.stroke();
+		if( !self.loopy.showNodeControls ){
+			ctx.globalAlpha = _controlsAlpha;
+			ctx.strokeStyle = "rgba(0,0,0,0.8)";
+			// top arrow
+			ctx.beginPath();
+			ctx.moveTo(-cl,-cy-cl);
+			ctx.lineTo(0,-cy-cl*2);
+			ctx.lineTo(cl,-cy-cl);
+			ctx.lineWidth = (_controlsDirection>0) ? 10: 3;
+			if(self.loopy.showPlayTutorial) ctx.lineWidth=6;
+			ctx.stroke();
+			// bottom arrow
+			ctx.beginPath();
+			ctx.moveTo(-cl,cy+cl);
+			ctx.lineTo(0,cy+cl*2);
+			ctx.lineTo(cl,cy+cl);
+			ctx.lineWidth = (_controlsDirection<0) ? 10: 3;
+			if(self.loopy.showPlayTutorial) ctx.lineWidth=6;
+			ctx.stroke();
+		}
 
 		// Restore
 		ctx.restore();
