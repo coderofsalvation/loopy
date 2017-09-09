@@ -225,7 +225,7 @@ function Sidebar(loopy){
 		tpl    += '    hideNodeControls: true'    + "\n"
 		tpl    += '  },'                          + "\n"
 		tpl    += '  onEvent: function(e, data){' + "\n"
-		tpl    += '    //console.log(e)'          + "\n"
+		tpl    += '    if( e == "signal") data.process(data.signal)'+ "\n"
 		tpl    += '  }'                           + "\n"
 		tpl    += '}'                             + "\n"
 		var cmp = {                                                                                                                                   

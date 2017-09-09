@@ -13,8 +13,8 @@ Node.COLORS = {
 	5: "#A97FFF" // purple
 };
 
-Node.defaultValue = 0.5;
-Node.defaultHue = 0;
+Node.defaultValue = 1.0;
+Node.defaultHue = 4;
 
 Node.DEFAULT_RADIUS = 60;
 
@@ -278,7 +278,7 @@ function Node(model, config){
 		}
 
 		// Controls!
-		if( !self.loopy.showNodeControls ){
+		if( self.loopy.showNodeControls ){
 			ctx.globalAlpha = _controlsAlpha;
 			ctx.strokeStyle = "rgba(0,0,0,0.8)";
 			// top arrow

@@ -366,7 +366,9 @@ function initScript(loopy){
 }
 
 function pluck(obj, path){
-  return new Function('obj', "return obj."+path)(obj)
+  try {
+	  return new Function('obj', "return obj."+path)(obj)
+  } catch (e) { return undefined }
 }
 
 
