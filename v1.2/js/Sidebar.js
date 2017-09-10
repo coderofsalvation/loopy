@@ -210,6 +210,7 @@ function Sidebar(loopy){
 			"<hr/><br>"+
 
 			"<span class='mini_button' onclick='publish(\"modal\",[\"save_link\"])'>save as link</span> <br><br>"+
+			//"<span class='mini_button' onclick='publish(\"modal\",[\"save_gif\"])'>save as gif</span> <br><br>"+
 			//"<span class='mini_button' onclick='publish(\"modal\",[\"save_image\"])'>save as image</span> <br><br>"+
 			"<span class='mini_button' onclick='publish(\"modal\",[\"embed\"])'>embed in your website</span> <br><br>"+
 
@@ -242,7 +243,6 @@ function Sidebar(loopy){
 			}
 		}
 		page.onedit = function(){
-			console.dir(this)
 			loopy.model.globalScript = this.target.globalConfig.replace(/(\t)/gi,'').replace(/[ ]+;[ ]+/gi,';') //.replace(/\s\s+/g, ' ')
 			publish("model/changed")
 		}

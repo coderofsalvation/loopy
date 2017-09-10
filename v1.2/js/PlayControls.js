@@ -40,6 +40,22 @@ function PlayControls(loopy){
 		buttonDOM.setAttribute("big","yes");
 		buttonDOM.style.fontSize = "28px";
 		buttonDOM.style.height = "35px";
+		buttonDOM.style.bottom = '65px';
+
+		// RECORD BUTTON
+		var buttonDOM = page.addComponent(new PlayButton({
+			label: "Record GIF",
+			tooltip: '', //isMacLike ? "⌘-Enter" : "control-enter",
+			onclick: function(){
+				loopy.embedded= true
+				initScript(loopy)
+				loopy.setMode(Loopy.MODE_PLAY);
+				publish("record_gif")
+			}
+		})).dom;
+		buttonDOM.setAttribute("big","yes");
+		buttonDOM.style.fontSize = "28px";
+		buttonDOM.style.height = "35px";
 
 		self.addPage("Editor", page);
 	})();
@@ -87,6 +103,8 @@ function PlayControls(loopy){
 				label: "Stop",
 				onclick: function(){
 					loopy.setMode(Loopy.MODE_EDIT);
+					publish("record_gif_stop")
+					loopy.embedded= false
 				}
 			})).dom;
 			buttonDOM.style.width = "100px";
@@ -127,8 +145,12 @@ function PlayButton(config){
 
 	var self = this;
 
-	var label = "<div class='play_button_icon' icon='"+config.icon+"'></div> "
-				+ "<div class='play_button_label'>"+config.label+"</div>";
+	var label =  ""
+
+	if( config.icon >= 0)
+		label 	+= "<div class='play_button_icon' icon='"+config.icon+"'></div> "
+
+    label 		+= "<div class='play_button_label'>"+config.label+"</div>";
 
 	self.dom = _createButton(label, function(){
 		config.onclick();
@@ -141,6 +163,7 @@ function PlayButton(config){
 	}
 
 }
+
 function PlaySlider(config){
 
 	var self = this;

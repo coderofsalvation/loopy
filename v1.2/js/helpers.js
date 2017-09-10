@@ -371,4 +371,18 @@ function pluck(obj, path){
   } catch (e) { return undefined }
 }
 
+var saveData = (function () {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    return function (data, fileName) {
+        //blob = new Blob([ JSON.stringify(data)], {type: "octet/stream"}),
+	  	url = window.URL.createObjectURL(data);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+}());
+
 

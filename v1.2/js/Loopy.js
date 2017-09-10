@@ -58,6 +58,9 @@ function Loopy(config){
 	// Modal
 	self.modal = new Modal(self);
 
+	// GIF recorder
+	self.recorder = new Recorder(self)
+
 	//////////
 	// INIT //
 	//////////
