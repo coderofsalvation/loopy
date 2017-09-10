@@ -40,6 +40,9 @@ function PlayControls(loopy){
 		buttonDOM.setAttribute("big","yes");
 		buttonDOM.style.fontSize = "28px";
 		buttonDOM.style.height = "35px";
+
+		/* NOT STABLE
+
 		buttonDOM.style.bottom = '65px';
 
 		// RECORD BUTTON
@@ -56,6 +59,7 @@ function PlayControls(loopy){
 		buttonDOM.setAttribute("big","yes");
 		buttonDOM.style.fontSize = "28px";
 		buttonDOM.style.height = "35px";
+		*/
 
 		self.addPage("Editor", page);
 	})();
